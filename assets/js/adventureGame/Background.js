@@ -1,63 +1,65 @@
 import GameEnv from './GameEnv.js';
 import GameObject from './GameObject.js';
 
-/** Background class for primary background
- * 
- */
+/** Background class for primary background */
 export class Background extends GameObject {
     constructor(data = null) {
         super();
-        if (data.src) {
+        this.isLoaded = false; // Track image load state
+
+        if (data?.src) {
             this.image = new Image();
             this.image.src = data.src;
+
+            this.image.onload = () => {
+                this.isLoaded = true;
+                this.draw(); // Ensure the image is drawn only after loading
+            };
+
+            this.image.onerror = () => {
+                console.error(`Failed to load background image: ${data.src}`);
+            };
         } else {
             this.image = null;
+            this.isLoaded = true; // If no image, consider it "loaded" for solid color fallback
         }
+
         GameEnv.gameObjects.push(this);
     }
 
-    /** This method draws to GameEnv context, primary background
-     * 
-     */
+    /** This method draws to GameEnv context, primary background */
     draw() {
         const ctx = GameEnv.ctx;
         const width = GameEnv.innerWidth;
         const height = GameEnv.innerHeight;
 
-        if (this.image) {
+        if (this.isLoaded && this.image) {
             // Draw the background image scaled to the canvas size
             ctx.drawImage(this.image, 0, 0, width, height);
         } else {
-            // Fill the canvas with fillstyle color if no image is provided
+            // Fallback: Fill canvas with solid color if image is not loaded or missing
             ctx.fillStyle = '#87CEEB';
             ctx.fillRect(0, 0, width, height);
         }
     }
 
-    /** For primary background, update is the same as draw
-     * 
-     */
+    /** For primary background, update is the same as draw */
     update() {
         this.draw();
     }
 
-    /** For primary background, resize is the same as draw
-     *
-     */
+    /** For primary background, resize is the same as draw */
     resize() {
-        this.draw();
+        if (this.isLoaded) this.draw();
     }
 
-    /** Destroy Game Object
-     * remove object from GameEnv.gameObjects array
-     */
+    /** Destroy Game Object - remove from GameEnv.gameObjects array */
     destroy() {
         const index = GameEnv.gameObjects.indexOf(this);
         if (index !== -1) {
             GameEnv.gameObjects.splice(index, 1);
         }
     }
-    
 }
 
 export default Background;

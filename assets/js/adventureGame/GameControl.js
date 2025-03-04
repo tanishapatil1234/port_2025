@@ -1,8 +1,8 @@
 import GameEnv from './GameEnv.js';
 import GameLevelWater from './GameLevelWater.js';
 import GameLevelDesert from './GameLevelDesert.js';
+import GameLevelPrisonEscape from './GameLevelPrisonEscape.js';
 import { getStats } from "./StatsManager.js";
-
 
 
 const createStatsUI = () => {
@@ -50,7 +50,7 @@ const GameControl = {
 
     start: function(path) {
         GameEnv.create();
-        this.levelClasses = [GameLevelDesert, GameLevelWater];
+        this.levelClasses = [GameLevelPrisonEscape, GameLevelDesert, GameLevelWater];
         this.currentLevelIndex = 0;
         this.path = path;
         this.addExitKeyListener();

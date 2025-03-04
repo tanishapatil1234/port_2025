@@ -4,7 +4,7 @@ const Prompt = {
 
     backgroundDim: {
         create () {
-            this.dim = true // sets the dim to be true when the prompt is opened
+            this.dim = true
             console.log("CREATE DIM")
             const dimDiv = document.createElement("div");
             dimDiv.id = "dim";
@@ -43,152 +43,135 @@ const Prompt = {
         header.appendChild(th);
         table.appendChild(header);
     
-        return table;
+        // Question 1: Which of these is not a programming language?
+        const q1Row = document.createElement("tr");
+        const q1Cell = document.createElement("td");
+        q1Cell.innerText = "1. Which of these is not a programming language?\n a) Python  b) CSS  c) Java  d) C++";
+        q1Row.appendChild(q1Cell);
+        const q1InputCell = document.createElement("td");
+        const q1Input = document.createElement("input");
+        q1Input.type = "text";
+        q1Input.placeholder = "Enter a, b, c, or d";
+        q1Input.dataset.questionIndex = "0";
+        q1InputCell.appendChild(q1Input);
+        q1Row.appendChild(q1InputCell);
+        table.appendChild(q1Row);
+
+        // Question 2: Which of these is a JavaScript data type?
+        const q2Row = document.createElement("tr");
+        const q2Cell = document.createElement("td");
+        q2Cell.innerText = "2. Which of these is a JavaScript data type?\n a) Integer  b) Character  c) Decimal  d) String";
+        q2Row.appendChild(q2Cell);
+        const q2InputCell = document.createElement("td");
+        const q2Input = document.createElement("input");
+        q2Input.type = "text";
+        q2Input.placeholder = "Enter a, b, c, or d";
+        q2Input.dataset.questionIndex = "1";
+        q2InputCell.appendChild(q2Input);
+        q2Row.appendChild(q2InputCell);
+        table.appendChild(q2Row);
+
+        // Add submit button
+        const submitRow = document.createElement("tr");
+        const submitCell = document.createElement("td");
+        submitCell.colSpan = 2;
+        submitCell.style.textAlign = "center";
+        const submitButton = document.createElement("button");
+        submitButton.innerText = "Submit";
+        submitButton.addEventListener("click", this.handleSubmit.bind(this));
+        submitCell.appendChild(submitButton);
+        submitRow.appendChild(submitCell);
+        table.appendChild(submitRow);
+
+        // Wrap the table in a scrollable container
+        const container = document.createElement("div");
+        container.style.maxHeight = "400px";
+        container.style.overflowY = "auto";
+        container.style.border = "1px solid #ccc";
+        container.style.padding = "10px";
+        container.appendChild(table);
+        return container;
     },
-    
-    
 
     toggleDetails() {
         Prompt.detailed = !Prompt.detailed
-
         Prompt.updatePromptDisplay()
     },
 
     updatePromptTable() {
-        const table = this.createPromptDisplayTable();
-        // Use `currentNpc` to populate questions
-        if (this.currentNpc && this.currentNpc.questions) {
-            this.currentNpc.questions.forEach((question, index) => {
-                const row = document.createElement("tr");
-                // Question cell
-                const questionCell = document.createElement("td");
-                questionCell.innerText = `${index + 1}. ${question}`;
-                row.appendChild(questionCell);
-                // Input cell
-                const inputCell = document.createElement("td");
-                const input = document.createElement("input");
-                input.type = "text";
-                input.placeholder = "Your answer here...";
-                input.dataset.questionIndex = index; // Tag input with the question index
-                inputCell.appendChild(input);
-                row.appendChild(inputCell);
-                table.appendChild(row);
-            });
-            // Add submit button
-            const submitRow = document.createElement("tr");
-            const submitCell = document.createElement("td");
-            submitCell.colSpan = 2;
-            submitCell.style.textAlign = "center";
-            const submitButton = document.createElement("button");
-            submitButton.innerText = "Submit";
-            submitButton.addEventListener("click", this.handleSubmit.bind(this)); // Attach submission handler
-            submitCell.appendChild(submitButton);
-            submitRow.appendChild(submitCell);
-            table.appendChild(submitRow);
-        } else {
-            const row = document.createElement("tr");
-            const noQuestionsCell = document.createElement("td");
-            noQuestionsCell.colSpan = 2;
-            noQuestionsCell.innerText = "No questions available.";
-            row.appendChild(noQuestionsCell);
-            table.appendChild(row);
-        }
-        // Wrap the table in a scrollable container
-        const container = document.createElement("div");
-        container.style.maxHeight = "400px"; // Limit height for scrollability
-        container.style.overflowY = "auto"; // Enable vertical scrolling
-        container.style.border = "1px solid #ccc"; // Optional: add a border
-        container.style.padding = "10px"; // Optional: add some padding
-        container.appendChild(table);
-        return container;
+        return this.createPromptDisplayTable();
     },
+
     handleSubmit() {
-        // Collect all answers
         const inputs = document.querySelectorAll("input[type='text']");
         const answers = Array.from(inputs).map(input => ({
             questionIndex: input.dataset.questionIndex,
-            answer: input.value.trim()
+            answer: input.value.trim().toLowerCase()
         }));
+
+        // Check answers
+        let results = "";
+        if (answers[0]?.answer === "b") {
+            results += "Question 1: Correct! CSS is not a programming language.\n";
+        } else {
+            results += "Question 1: Wrong! The correct answer is b) CSS.\n";
+        }
+        if (answers[1]?.answer === "d") {
+            results += "Question 2: Correct! String is a JavaScript data type.";
+        } else {
+            results += "Question 2: Wrong! The correct answer is d) String.";
+        }
+
         console.log("Submitted Answers:", answers);
-        // Handle the submission logic (e.g., save answers, validate, etc.)
-        alert("Your answers have been submitted!");
+        alert(results);
         Prompt.isOpen = false;
         Prompt.backgroundDim.remove();
     },
-    
-    
-    updatePromptDisplay () {
+
+    updatePromptDisplay() {
         const table = document.getElementsByClassName("table scores")[0]
         const detailToggleSection = document.getElementById("detail-toggle-section")
         const clearButtonRow = document.getElementById("clear-button-row")
         const pagingButtonsRow = document.getElementById("paging-buttons-row")
 
-        if (detailToggleSection) {
-            detailToggleSection.remove()
-        }
+        if (detailToggleSection) detailToggleSection.remove()
+        if (table) table.remove()
+        if (pagingButtonsRow) pagingButtonsRow.remove()
+        if (clearButtonRow) clearButtonRow.remove()
 
-        if (table) {
-            table.remove() //remove old table if it is there
-        }
-
-        if (pagingButtonsRow) {
-            pagingButtonsRow.remove()
-        }
-
-        if (clearButtonRow) {
-            clearButtonRow.remove()
-        }
-
-        
-        document.getElementById("promptDropDown").append(Prompt.updatePromptTable()) //update new Prompt
-        
-        
+        document.getElementById("promptDropDown").append(Prompt.updatePromptTable())
     },
 
-    backPage () {
+    backPage() {
         const table = document.getElementsByClassName("table scores")[0]
-
-        if (Prompt.currentPage - 1 == 0) {
-            return;
-        }
-    
-
+        if (Prompt.currentPage - 1 == 0) return;
         Prompt.currentPage -= 1
-
         Prompt.updatePromptDisplay()
     },
     
-    frontPage () {
+    frontPage() {
         Prompt.currentPage += 1
         Prompt.updatePromptDisplay()
-        
     },
 
     openPromptPanel(npc) {
         const promptDropDown = document.querySelector('.promptDropDown');
         const promptTitle = document.getElementById("promptTitle");
     
-        // Close any existing prompt before opening a new one
         if (this.isOpen) {
-            this.backgroundDim.remove(); // Ensures previous dim is removed
+            this.backgroundDim.remove();
         }
     
-        this.currentNpc = npc; // Assign the current NPC when opening the panel
+        this.currentNpc = npc;
         this.isOpen = true;
     
-        // Ensure the previous content inside promptDropDown is removed
         promptDropDown.innerHTML = ""; 
-        
         promptTitle.style.display = "block";
-
-        // Add the new title
-        promptTitle.innerHTML = npc.quiz.title || "Questions";
+        promptTitle.innerHTML = npc.quiz?.title || "NPC Quiz";
         promptDropDown.appendChild(promptTitle);
     
-        // Display the new questions
         promptDropDown.appendChild(this.updatePromptTable());
     
-        // Handle the background dim effect
         this.backgroundDim.create();
     
         promptDropDown.style.position = "fixed";
@@ -198,15 +181,11 @@ const Prompt = {
         promptDropDown.style.left = "15%"; 
         promptDropDown.style.transition = "all 0.3s ease-in-out"; 
     },
-    
 
-    initializePrompt () {
+    initializePrompt() {
         const promptTitle = document.createElement("div");
         promptTitle.id = "promptTitle";
         document.getElementById("promptDropDown").appendChild(promptTitle);
-        // document.getElementById("promptDropDown").append(this.updatePromptTable())
-
-       // document.getElementById("prompt-button").addEventListener("click",Prompt.openPromptPanel)
     },
 
     shuffleArray(array) {
