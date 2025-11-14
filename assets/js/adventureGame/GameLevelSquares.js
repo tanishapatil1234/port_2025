@@ -1,16 +1,24 @@
 // To build GameLevels, each contains GameObjects from below imports
-import Background from './Background.js';
-import PlayerOne from './PlayerOne.js';
-import PlayerTwo from './PlayerTwo.js';
+import GameEnvBackground from './GameEngine/GameEnvBackground.js';
+import Player from './GameEngine/Player.js';
 
 // Minimal Definition
 class GameLevelSquares {
-  constructor(path) {
-    this.objects = [
-      { class: Background, data: {} },
-      { class: PlayerOne },
-      { class: PlayerTwo },
+  constructor(gameEnv) {
+    let width = gameEnv.innerWidth;
+    let height = gameEnv.innerHeight;
+
+    this.classes = [      
+      { class: GameEnvBackground, data: {} },
+      { class: Player, data: {} },
+      { class: Player, data: {
+        INIT_POSITION: { x: width, y: height },
+        keypress: { up: 73, left: 74, down: 75, right: 76 },
+        fillStyle: 'green' 
+      }},
     ];
+    
+    console.log("GameLevelSquares constructor finished");
   }
 }
 

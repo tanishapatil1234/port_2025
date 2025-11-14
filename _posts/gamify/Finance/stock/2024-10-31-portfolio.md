@@ -1,22 +1,20 @@
 ---
-layout: base
+layout: fortunefinders
 permalink: /stocks/portfolio
 title: Stocks Portfolio
 ---
 
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Stock Portfolio</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-        }
+      font-family: Arial, sans-serif;
+      background-color: #0f0f0f;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
     .navbar {
       display: flex;
       justify-content: space-between;
@@ -118,23 +116,6 @@ title: Stocks Portfolio
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
     </style>
-</head>
-<body>
-    <!-- Navigation Bar -->
-    <!-- Navigation Bar -->
-<nav class="navbar">
-    <div class="logo">NITD</div>
-    <div class="nav-buttons">
-        <a href="{{site.baseurl}}/stocks/home">Home</a>
-        <a href="{{site.baseurl}}/crypto/portfolio">Crypto</a>
-        <a href="{{site.baseurl}}/stocks/viewer">Stocks</a>
-        <a href="{{site.baseurl}}/stocks/portfolio">Portfolio</a>
-        <a href="{{site.baseurl}}/stocks/buysell">Buy/Sell</a>
-        <a href="{{site.baseurl}}/stocks/leaderboard">Leaderboard</a>
-        <a href="{{site.baseurl}}/stocks/game">Stocks Game</a>
-
-    </div>
-</nav>
     <!-- Portfolio Content -->
     <div class="portfolio">
         <div class="portfolio-content">
@@ -444,5 +425,4 @@ title: Stocks Portfolio
             getPortfolioPerformance();
         });
     </script>
-</body>
 </html>

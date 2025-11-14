@@ -1,17 +1,15 @@
 ---
 layout: post 
-title: Course Descriptions
-description: An overview of Computer Science pathway at Del Norte High School
-author: John Mortensen, Vivian Ni, Bria Gilliam
-image: /images/mario_animation.png
+title: Open Coding Society
+description: An Open Pathway to Computer Science
+sprite: /images/mario_animation.png
 hide: true
-menu: nav/home.html
 ---
 
 <!-- Liquid:  statements-->
 
-<!--- Concatenation of site URL to frontmatter image  --->
-{% assign sprite_file = site.baseurl | append: page.image %}
+<!--- Concatenation of site URL to frontmatter sprite  --->
+{% assign sprite_file = site.baseurl | append: page.sprite %}
 <!--- Has is a list variable containing mario metadata for sprite --->
 {% assign hash = site.data.mario_metadata %}  
 <!--- Size width/height of Sprit images --->
@@ -39,6 +37,10 @@ menu: nav/home.html
   */
   #mario {
     background-position: calc({{animations[0].col}} * {{pixels}} * -1px) calc({{animations[0].row}} * {{pixels}}* -1px);
+  }
+
+  .social-icon {
+    filter: invert(1);
   }
 </style>
 
@@ -97,9 +99,19 @@ menu: nav/home.html
       this.animate(this.obj["Walk"], 3);
     }
 
+    startWalkingL() {
+      this.stopAnimate();
+      this.animate(this.obj["WalkL"], -3);
+    }
+
     startRunning() {
       this.stopAnimate();
       this.animate(this.obj["Run1"], 6);
+    }
+
+    startRunningL() {
+      this.stopAnimate();
+      this.animate(this.obj["Run1L"], -6);
     }
 
     startPuffing() {
@@ -107,9 +119,19 @@ menu: nav/home.html
       this.animate(this.obj["Puff"], 0);
     }
 
+    startPuffingL() {
+      this.stopAnimate();
+      this.animate(this.obj["PuffL"], 0);
+    }
+
     startCheering() {
       this.stopAnimate();
       this.animate(this.obj["Cheer"], 0);
+    }
+
+    startCheeringL() {
+      this.stopAnimate();
+      this.animate(this.obj["CheerL"], 0);
     }
 
     startFlipping() {
@@ -117,9 +139,19 @@ menu: nav/home.html
       this.animate(this.obj["Flip"], 0);
     }
 
+    startFlippingL() {
+      this.stopAnimate();
+      this.animate(this.obj["FlipL"], 0);
+    }
+
     startResting() {
       this.stopAnimate();
       this.animate(this.obj["Rest"], 0);
+    }
+
+    startRestingL() {
+      this.stopAnimate();
+      this.animate(this.obj["RestL"], 0);
     }
 
     stopAnimate() {
@@ -131,42 +163,68 @@ menu: nav/home.html
 
   ////////// event control /////////
 
+// Add event listener for keydown events
   window.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowRight") {
-      event.preventDefault();
-      if (event.repeat) {
-        mario.startCheering();
-      } else {
-        if (mario.currentSpeed === 0) {
-          mario.startWalking();
-        } else if (mario.currentSpeed === 3) {
-          mario.startRunning();
-        }
-      }
-    } else if (event.key === "ArrowLeft") {
-      event.preventDefault();
-      if (event.repeat) {
-        mario.stopAnimate();
-      } else {
-        mario.startPuffing();
-      }
-    }
-  });
+      const activeElement = document.activeElement;
+      const isTyping = activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA";
+      if (isTyping) return; // ✅ Skip game controls while typing in forms
 
-  //touch events that enable animations
-  window.addEventListener("touchstart", (event) => {
-    event.preventDefault(); // prevent default browser action
-    if (event.touches[0].clientX > window.innerWidth / 2) {
-      // move right
-      if (currentSpeed === 0) { // if at rest, go to walking
-        mario.startWalking();
-      } else if (currentSpeed === 3) { // if walking, go to running
-        mario.startRunning();
+      if (event.key === "ArrowRight" || event.key === "d" || event.key === "D") {
+          event.preventDefault();
+          if (event.repeat) {
+              mario.startCheering();
+          } else {
+              if (mario.currentSpeed === 0) {
+                  mario.startWalking();
+              } else if (mario.currentSpeed === 3) {
+                  mario.startRunning();
+              }
+          }
+      } else if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
+          event.preventDefault();
+          if (event.repeat) {
+              mario.startCheeringL();
+          } else {
+              if (mario.currentSpeed === 0) {
+                  mario.startWalkingL();
+              } else if (mario.currentSpeed === 3) {
+                  mario.startRunningL();
+              }
+          }
+      } else if (event.key === "ArrowUp" || event.key === "w" || event.key === "W") {
+          event.preventDefault();
+          mario.startFlipping();
+      } else if (event.key === "ArrowDown" || event.key === "s" || event.key === "S") {
+          event.preventDefault();
+          mario.startResting();
       }
-    } else {
-      // move left
-      mario.startPuffing();
-    }
+  });
+  
+  // Add event listener for touchstart events
+  window.addEventListener("touchstart", (event) => {
+      event.preventDefault(); // prevent default browser action
+      const touchX = event.touches[0].clientX;
+      const screenWidth = window.innerWidth;
+      const centerThreshold = screenWidth * 0.1; // 10% of the screen width on either side of the center
+
+      if (touchX > screenWidth / 2 + centerThreshold) {
+          // move right
+          if (mario.currentSpeed === 0) {
+              mario.startWalking();
+          } else if (mario.currentSpeed === 3) {
+              mario.startRunning();
+          }
+      } else if (touchX < screenWidth / 2 - centerThreshold) {
+          // move left
+          if (mario.currentSpeed === 0) {
+              mario.startWalkingL();
+          } else if (mario.currentSpeed === 3) {
+              mario.startRunningL();
+          }
+      } else {
+          // touch near the center, make Mario puff
+          mario.startPuffing();
+      }
   });
 
   //stop animation on window blur
@@ -190,51 +248,88 @@ menu: nav/home.html
 
 </script>
 
-## Investing in Your Technical Future
+## About
 
-Computer Science is the Wild Card for all Majors and Careers.
+Empower yourself to solve real-world problems, unlock creativity, and open doors to every field—because coding is the language of innovation.
 
-> Explore the Computer Science Pathway at Del Norte High School and invest in your technical skills.
+> Invest in your technical skills through Project-based learning.
 
-<div style="display: flex; align-items: flex-start;">
+<div style="display: flex; align-items: flex-start; justify-content: center; gap: 40px; flex-wrap: wrap;">
 
-<table>
-<tr>
-  <td>
-    <div style="flex: 65%; text-align: left;">
-      <p>All Del Norte CompSci classes are designed to provide real-world development experiences.</p>
-      <ul>
-        <li> Project talks between teachers and students</li>
-        <li> Teaching through Tech talks (versus lectures) </li>
-        <li> Peer collaboration using GitHub Issues and Kanban boards </li>
-        <li> Critical thinking while performing iterative coding </li>
-        <li> Creativity and designs in projects, as well as code </li>
-      </ul>
-    </div>
-  </td>
-  <td>
-    <div style="flex: 35%; text-align: center;">
-      <img src="{{site.baseurl}}/images/course-brag/qr.png" alt="QR Code" style="width: 100%; max-width: 300px; height: auto; margin-left: 10px;">
-    </div>
-  </td>
-</tr>
-</table>
+  <!-- Logo -->
+  <div style="text-align: center;">
+    <img src="{{site.baseurl}}/images/logo-framed.png" alt="Logo" style="width: 180px; max-width: 100%;">
+  </div>
 
+  <!-- QR Code -->
+  <div style="text-align: center;">
+    <img src="{{site.baseurl}}/images/course-brag/qr.png" alt="QR Code" style="width: 180px; max-width: 100%;">
+  </div>
+
+  <!-- Socials -->
+  <div style="min-width: 220px;">
+    <ul style="list-style: none; padding: 0; font-size: 1.1em;">
+      <li>
+        <img class="social-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/gmail.svg" alt="Gmail" style="width: 20px; vertical-align: middle; margin-right: 8px;">
+        <a href="mailto:open.coding.society@gmail.com">open.coding.society@gmail.com</a>
+      </li>
+      <li>
+        <img class="social-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/linkedin.svg" alt="LinkedIn" style="width: 20px; vertical-align: middle; margin-right: 8px;">
+        <a href="https://linkedin.com/company/open-coding-society" target="_blank">LinkedIn</a>
+      </li>
+      <li>
+        <img class="social-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" alt="X" style="width: 20px; vertical-align: middle; margin-right: 8px;">
+        <a href="https://x.com/Open_Coding" target="_blank">@Open_Coding</a>
+      </li>
+      <li>
+        <img class="social-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtube.svg" alt="YouTube" style="width: 20px; vertical-align: middle; margin-right: 8px;">
+        <a href="https://www.youtube.com/@OpenCodingSociety" target="_blank">@OpenCodingSociety</a>
+      </li>
+    </ul>
+  </div>
 </div>
 
 ## Project-based learning
 
-Teacher created projects, project requirements, technical materials, and support.
+Instructor created projects, project requirements, technical materials, and support.
 
-> Grades are based on projects, time invested, engagement, learned concepts, participation with peers, and live reviews between student(s) and teacher.
+> Grades are based on projects, time invested, engagement, learned concepts, participation with peers, and live reviews between student(s) and instructor.
 
 - Performing Agile/Scrum development
-- Coding, frontend, backend, devops, version control, and algorithmic thinking
+- Coding, frontend, backend, devops, version control, and using algorithmic thinking
 - Creativity, research, design, data structures, and utilizing ChatGPT
 - Performing teamwork, team communication and collaboration, peer reviews/grading
 - Focus on technical communications through project presentations and student-led teaching
 
-> Classroom work time is 3-4 hours per week. Homework expectations are approximately 2-3 hours per week. Homework is scheduled over a Sprint, approximately 2-4 weeks. Time lost is extremely hard to make up as all materials are cumulative.
+### Time Breakdown
+
+Instructor is extremely focused on work, routines, and culture established in the classroom.
+
+> If individuals, groups and teams, and classroom are effective with class time, homework will not be assigned.
+
+- Learning objectives are scheduled over a Sprint
+- Sprints last 2–4 weeks.
+- Classroom work is 4+ hours per week.
+  - Do not waste time opportunities given.
+  - Balance technical time and collaboration time.
+- Homework is 1–2 hours per week.  
+  - Review materials discussed in class.
+  - Mentally prep for next day (ie update issues or kanban).
+  - Extra prep should be considered for live reviews.
+
+### Make-up Policy
+
+Instructor believes absences disrupt work culture and routines.
+
+- Communicate absence beforehand with the instructor and team members.
+- Make a make-up plan and try to recreate situation missed.
+
+> Instructor believes student is supposed to be in class.  Similar to how an employee is expected to be at work.
+
+- Make-up work is challenging for everyone—not just the person who missed class.
+- Time lost in class is extremely hard to make up, since individuals are working with team members, team teaching lessons to the class, or performing live reviews with the teacher.
+- Instructor has freedom to adjust instruction during the week according to needs of classroom.  
+- Modalities of instruction, for various learning styles, do not stick to published materials only.
 
 ![ccr]({{site.baseurl}}/images/course-brag/ccr.png)
 
@@ -270,7 +365,7 @@ Computer Science Principles is designed as a college-level introduction to compu
 
 ## Computer Science "A" 1,2 and Data Structures 2; Grades 11-12
 
-AP Computer Science A is an in-depth course that focuses on programming, algorithms, and data structures. The AP Computer Science 'A' curriculum is integrated into this course, which covers the Java programming language and topics such as fundamentals of programming, using objects, writing classes, arrays, array lists, 2D arrays, inheritance, and recursion. 
+AP Computer Science A is an in-depth course that focuses on programming, algorithms, and data structures. The AP Computer Science 'A' curriculum is integrated into this course, which covers the Java programming language and topics such as fundamentals of programming, using objects, writing classes, arrays, array lists, 2D arrays, inheritance, and recursion.
 
 > Students will gain understanding through analysis, coding, and individual and team projects. The course will establish fluency in Java, utilize JavaScript, and work with Linux.
 
@@ -287,4 +382,237 @@ AP Computer Science A is an in-depth course that focuses on programming, algorit
 
 ![csa]({{site.baseurl}}/images/course-brag/csa24.png)
 
-![foundation]({{site.baseurl}}/images/course-brag/foundation.png)
+<!-- Feedback Button + Modal -->
+<!-- Feedback Button + Modal -->
+<style>
+  #feedback-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 9999px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease-in-out;
+    z-index: 1000;
+  }
+
+  #feedback-btn:hover {
+    background-color: #1e40af;
+  }
+
+  #feedback-modal {
+    display: none;
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background: #1f2937;
+    color: white;
+    border-radius: 16px;
+    padding: 20px;
+    width: 320px;
+    max-width: 90vw;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    border: 1px solid #4b5563;
+    z-index: 1000;
+    animation: slideIn 0.2s ease-out;
+    box-sizing: border-box;
+  }
+
+  #feedback-modal h4 {
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-align: center;
+    border-bottom: 1px solid #4b5563;
+    padding-bottom: 8px;
+  }
+
+  #feedback-modal textarea,
+  #feedback-modal input {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 10px;
+    font-size: 14px;
+    color: white;
+    background: #374151;
+    border-radius: 8px;
+    border: 1px solid #6b7280;
+    box-sizing: border-box;
+  }
+
+  #feedback-modal textarea::placeholder,
+  #feedback-modal input::placeholder {
+    color: #9ca3af;
+  }
+
+  #feedback-modal textarea:focus,
+  #feedback-modal input:focus {
+    outline: none;
+    border-color: #3b82f6;
+  }
+
+  #feedback-modal button {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    width: 100%;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  #feedback-modal button:hover {
+    background-color: #2563eb;
+  }
+
+  #feedback-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #9ca3af;
+    cursor: pointer;
+  }
+
+  #feedback-modal-close:hover {
+    color: white;
+  }
+
+  #feedback-success,
+  #feedback-error {
+    font-size: 13px;
+    text-align: center;
+    margin-top: 12px;
+  }
+
+  #feedback-success {
+    color: #10b981;
+  }
+
+  #feedback-error {
+    color: #ef4444;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  #feedback-modal select {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 10px;
+    font-size: 14px;
+    color: white;
+    background: #374151;
+    border-radius: 8px;
+    border: 1px solid #6b7280;
+    box-sizing: border-box;
+    appearance: none;
+  }
+
+  #feedback-modal select:focus {
+    outline: none;
+    border-color: #3b82f6;
+  }
+
+  #feedback-modal select option {
+    background-color: #1f2937;
+    color: white;
+  }
+</style>
+
+<!-- Feedback Button & Modal -->
+<button id="feedback-btn">Tell us how we can improve!</button>
+
+<div id="feedback-modal">
+  <div id="feedback-modal-close">✕</div>
+  <h4>Submit Feedback</h4>
+  <select id="feedback-type" required>
+    <option value="">Select Inquiry Type</option>
+    <option value="Bug">Bug</option>
+    <option value="Feature Request">Feature Request</option>
+    <option value="Inquiry">Inquiry</option>
+    <option value="Other">Other</option>
+  </select>
+  <input type="text" id="feedback-title" placeholder="Title" required />
+  <textarea id="feedback-body" rows="4" placeholder="Your suggestion..." required></textarea>
+  <button id="feedback-submit">Submit</button>
+  <div id="feedback-success" style="display:none;">✅ Thanks for your feedback!</div>
+  <div id="feedback-error" style="display:none;">⚠️ Something went wrong.</div>
+</div>
+
+<script type="module">
+  import { javaURI } from '{{ site.baseurl }}/assets/js/api/config.js';
+  import { pythonURI } from '{{ site.baseurl }}/assets/js/api/config.js';
+
+  const btn = document.getElementById("feedback-btn");
+  const modal = document.getElementById("feedback-modal");
+  const closeBtn = document.getElementById("feedback-modal-close");
+  const submitBtn = document.getElementById("feedback-submit");
+  const successMsg = document.getElementById("feedback-success");
+  const errorMsg = document.getElementById("feedback-error");
+  console.log(window.user);
+
+  btn.onclick = () => {
+    modal.style.display = "block";
+    successMsg.style.display = "none";
+    errorMsg.style.display = "none";
+  };
+
+  closeBtn.onclick = () => {
+    modal.style.display = "none";
+  };
+
+  submitBtn.onclick = async () => {
+    const title = document.getElementById("feedback-title").value.trim();
+    const body = document.getElementById("feedback-body").value.trim();
+    const type = document.getElementById("feedback-type").value;
+
+    if (!title || !body) {
+      alert("Please fill in both fields.");
+      return;
+    }
+
+    const githubUsername = window.user?.uid || "Anonymous"; // fallback if not logged in
+    
+    console.log("Payload:", { title, body, type, uid: githubUsername });
+    
+    try {
+      const res = await fetch(`${pythonURI}/api/feedback/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ title, body, type, uid: githubUsername })
+      });
+
+      if (res.ok) {
+        successMsg.style.display = "block";
+        errorMsg.style.display = "none";
+        document.getElementById("feedback-title").value = "";
+        document.getElementById("feedback-body").value = "";
+      } else {
+        throw new Error();
+      }
+    } catch (err) {
+      successMsg.style.display = "none";
+      errorMsg.style.display = "block";
+    }
+  };
+</script>
